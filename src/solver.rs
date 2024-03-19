@@ -6,7 +6,6 @@ use crate::{board::Board, tree::Tree};
 
 pub struct Solver<K: Key> {
     tree: Tree<K, Board>,
-    past_states: Vec<K>,
     next_states: Vec<K>,
     board_to_key: HashMap<Board, K>,
 }
@@ -14,10 +13,6 @@ pub struct Solver<K: Key> {
 impl<K: Key> Solver<K> {
     pub fn tree(&self) -> &Tree<K, Board> {
         &self.tree
-    }
-
-    pub fn past_states(&self) -> &[K] {
-        &self.past_states
     }
 
     pub fn next_states(&self) -> &[K] {
@@ -30,25 +25,21 @@ impl<K: Key> Solver<K> {
 
     pub fn new(root: Board) -> Self {
         let tree = Tree::new(root.clone());
-        let past_states = Vec::new();
         let next_states = vec![tree.root()];
         let mut board_to_key = HashMap::new();
         board_to_key.insert(root, tree.root());
 
         Self {
             tree,
-            past_states,
             next_states,
             board_to_key,
         }
     }
 
     pub fn solve(&mut self) -> Vec<K> {
-        // let mut n = 0;
         let mut solved = self.one_step();
         while !self.next_states.is_empty() && solved.is_empty() {
             solved = self.one_step();
-            // n += 1;
         }
 
         solved
@@ -97,7 +88,6 @@ impl<K: Key> Solver<K> {
             }
         }
 
-        self.past_states.extend(current_states);
         solved_boards
     }
 }

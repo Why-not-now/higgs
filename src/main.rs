@@ -27,14 +27,6 @@ fn main() {
     let mut solutions = &solver.solve();
     let mut steps = Vec::new();
     while let Some(&step) = solutions.first() {
-        // let particles: Vec<_> = solver
-        //     .tree()
-        //     .get_value(*step)
-        //     .unwrap()
-        //     .particles()
-        //     .indexed_iter()
-        //     .filter(|(_index, particle)| !matches!(particle, Particle::Empty(_)))
-        //     .collect();
         steps.push(step);
         solutions = solver.tree().parents_of(step).unwrap()
     }
@@ -42,12 +34,4 @@ fn main() {
     for &step in steps.iter().rev() {
         solver.tree().get_value(step).unwrap().display_particles();
     }
-
-    // for &next_keys in solver.next_states() {
-    //     solver
-    //         .tree()
-    //         .get_value(next_keys)
-    //         .unwrap()
-    //         .display_particles();
-    // }
 }

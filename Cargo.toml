@@ -9,3 +9,6 @@ edition = "2021"
 ndarray = "0.15.6"
 enum_dispatch = "0.3.12"
 slotmap = "1.0.7"
+
+[profile.bench]
+debug = true

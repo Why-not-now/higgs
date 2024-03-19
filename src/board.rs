@@ -123,7 +123,7 @@ impl Board {
     }
 
     pub fn display_particles(&self) {
-        println!("╔═{}╗", "╤═".repeat(self.width - 1));
+        println!("╔══{}═╗", "═╤══".repeat(self.width - 1));
         for (row, content) in self.particles().columns().into_iter().enumerate() {
             let x: Vec<_> = content
                 .iter()
@@ -135,12 +135,12 @@ impl Board {
                     Particle::Neutron(_) => "n",
                 })
                 .collect();
-            println!("║{}║", x.join("│"));
+            println!("║ {} ║", x.join(" │ "));
             if row < self.height - 1 {
-                println!("╟─{}╢", ("┼─").repeat(self.width - 1));
+                println!("╟──{}─╢", ("─┼──").repeat(self.width - 1));
             }
         }
-        println!("╚═{}╝", "╧═".repeat(self.width - 1));
+        println!("╚══{}═╝", "═╧══".repeat(self.width - 1));
     }
 }
 
