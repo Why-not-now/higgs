@@ -78,16 +78,16 @@ impl Board {
         self.particles[from_pos] = Particle::default();
     }
 
-    pub fn add_particle(&mut self, particle: Particle, pos: Ix2) {
-        self.particles[pos] = particle;
+    pub fn add_particle(&mut self, particle: impl Into<Particle>, pos: Ix2) {
+        self.particles[pos] = particle.into();
     }
 
     pub fn remove_particle(&mut self, pos: Ix2) {
         self.particles[pos] = Particle::default();
     }
 
-    pub fn add_obstacle(&mut self, obstacle: Obstacle, pos: Ix2) {
-        self.obstacles[pos] = obstacle;
+    pub fn add_obstacle(&mut self, obstacle: impl Into<Obstacle>, pos: Ix2) {
+        self.obstacles[pos] = obstacle.into();
     }
 
     pub fn remove_obstacle(&mut self, pos: Ix2) {
@@ -154,7 +154,7 @@ mod tests {
     #[test]
     fn board_move_particle() {
         let mut board = Board::default(5, 7, vec![Ix2(1, 0)].into());
-        board.add_particle(Electron::default().into(), Ix2(3, 2));
+        board.add_particle(Electron::default(), Ix2(3, 2));
         assert_eq!(
             board.particles().get([3, 2]),
             Some(&Electron::default().into())

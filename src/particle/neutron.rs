@@ -98,7 +98,7 @@ mod tests {
 
         let start_index = Ix2(x, y);
 
-        board.add_particle(Neutron::default().into(), start_index);
+        board.add_particle(Neutron::default(), start_index);
 
         let new_boards = board
             .particles()
@@ -141,8 +141,8 @@ mod tests {
         let top_left_index = Ix2(0, 0);
         let bottom_right_index = Ix2(width - 1, height - 1);
 
-        board.add_particle(Neutron::default().into(), top_left_index);
-        board.add_particle(Neutron::default().into(), bottom_right_index);
+        board.add_particle(Neutron::default(), top_left_index);
+        board.add_particle(Neutron::default(), bottom_right_index);
 
         assert_eq!(
             board
@@ -179,11 +179,11 @@ mod tests {
         let right_three_index = Ix2(x + 3, y);
         let down_four_index = Ix2(x, y + 4);
 
-        board.add_particle(Neutron::default().into(), start_index);
-        board.add_particle(Neutron::default().into(), up_one_index);
-        board.add_particle(Neutron::default().into(), left_two_index);
-        board.add_particle(Neutron::default().into(), right_three_index);
-        board.add_particle(Neutron::default().into(), down_four_index);
+        board.add_particle(Neutron::default(), start_index);
+        board.add_particle(Neutron::default(), up_one_index);
+        board.add_particle(Neutron::default(), left_two_index);
+        board.add_particle(Neutron::default(), right_three_index);
+        board.add_particle(Neutron::default(), down_four_index);
 
         let new_boards = board
             .particles()
@@ -226,11 +226,11 @@ mod tests {
         let right_three_index = Ix2(x + 3, y);
         let down_four_index = Ix2(x, y + 4);
 
-        board.add_particle(Neutron::default().into(), start_index);
-        board.add_particle(Neutron::default().into(), up_one_index);
-        board.add_particle(Neutron::default().into(), left_two_index);
-        board.add_particle(Neutron::default().into(), right_three_index);
-        board.add_particle(Neutron::default().into(), down_four_index);
+        board.add_particle(Neutron::default(), start_index);
+        board.add_particle(Neutron::default(), up_one_index);
+        board.add_particle(Neutron::default(), left_two_index);
+        board.add_particle(Neutron::default(), right_three_index);
+        board.add_particle(Neutron::default(), down_four_index);
 
         let new_boards = board
             .particles()

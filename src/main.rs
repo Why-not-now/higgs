@@ -10,17 +10,17 @@ fn main() {
 
     let mut board = Board::default(7, 8, vec![Ix2(4, 2)].into());
 
-    board.add_particle(Electron::default().into(), Ix2(3, 1));
-    board.add_particle(Tau::default().into(), Ix2(2, 2));
-    board.add_particle(Tau::default().into(), Ix2(3, 6));
-    board.add_particle(Tau::default().into(), Ix2(1, 7));
-    board.add_particle(Neutron::default().into(), Ix2(2, 0));
-    board.add_obstacle(Block.into(), Ix2(6, 7));
-    board.add_obstacle(Hole.into(), Ix2(4, 3));
-    board.add_obstacle(Hole.into(), Ix2(5, 3));
-    board.add_obstacle(Hole.into(), Ix2(6, 3));
-    board.add_obstacle(Hole.into(), Ix2(2, 7));
-    board.add_obstacle(Hole.into(), Ix2(5, 7));
+    board.add_particle(Electron::default(), Ix2(3, 1));
+    board.add_particle(Tau::default(), Ix2(2, 2));
+    board.add_particle(Tau::default(), Ix2(3, 6));
+    board.add_particle(Tau::default(), Ix2(1, 7));
+    board.add_particle(Neutron::default(), Ix2(2, 0));
+    board.add_obstacle(Block, Ix2(6, 7));
+    board.add_obstacle(Hole, Ix2(4, 3));
+    board.add_obstacle(Hole, Ix2(5, 3));
+    board.add_obstacle(Hole, Ix2(6, 3));
+    board.add_obstacle(Hole, Ix2(2, 7));
+    board.add_obstacle(Hole, Ix2(5, 7));
 
     let mut solver: Solver<SolverKey> = Solver::new(board);
 

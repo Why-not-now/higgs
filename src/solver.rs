@@ -66,7 +66,7 @@ impl<K: Key> Solver<K> {
         self.next_states = Vec::new();
 
         for &current_key in &current_states {
-            for next_board in self.tree.get_value(current_key).unwrap().all_moves() {
+            for next_board in self.tree.get_value(current_key).expect("Board not found").all_moves() {
                 match self.board_to_key.get(&next_board) {
                     Some(next_key) => {
                         if self.next_states.contains(next_key) {
@@ -77,7 +77,7 @@ impl<K: Key> Solver<K> {
                         let new_key = self
                             .tree
                             .insert_child_of(current_key, next_board.clone())
-                            .expect("parent not found");
+                            .expect("Parent not found");
                         if next_board.is_solved() {
                             solved_boards.push(new_key);
                         }
