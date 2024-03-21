@@ -1,4 +1,4 @@
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
 pub enum Antiness {
     #[default]
     Ordinary,
@@ -9,7 +9,7 @@ pub trait AntiTrait {
     fn anti(&self) -> Antiness;
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
 pub enum Colour {
     #[default]
     White,
@@ -31,7 +31,7 @@ pub trait ColourTrait {
     fn colour(&self) -> Colour;
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, PartialOrd, Ord)]
 pub enum Mass {
     Massless,
     Light,
@@ -45,7 +45,7 @@ pub trait MassTrait {
     fn mass(&self) -> Mass;
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, PartialOrd, Ord)]
 pub enum Direction {
     Right,
     Down,

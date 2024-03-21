@@ -123,6 +123,7 @@ impl Board {
     }
 
     pub fn display_particles(&self) {
+        if self.width == 0 || self.height == 0 { return; }
         println!("╔══{}═╗", "═╤══".repeat(self.width - 1));
         for (row, content) in self.particles().columns().into_iter().enumerate() {
             let x: Vec<_> = content

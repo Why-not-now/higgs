@@ -19,7 +19,7 @@ pub trait ParticleTrait {
 }
 
 #[enum_dispatch(ParticleTrait)]
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, PartialOrd, Ord)]
 pub enum Particle {
     Empty,
     Electron,
@@ -34,7 +34,7 @@ impl Default for Particle {
     }
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
 pub struct Empty;
 
 impl ParticleTrait for Empty {

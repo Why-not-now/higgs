@@ -7,7 +7,7 @@ use crate::property::Antiness;
 
 use super::ParticleTrait;
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
 pub struct Neutron {
     anti: Antiness,
 }

@@ -9,7 +9,7 @@ pub mod hole;
 pub trait ObstacleTrait {}
 
 #[enum_dispatch(ObstacleTrait)]
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, PartialOrd, Ord)]
 pub enum Obstacle {
     Empty,
     Block,
@@ -22,7 +22,7 @@ impl Default for Obstacle {
     }
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
 pub struct Empty;
 
 impl ObstacleTrait for Empty {}

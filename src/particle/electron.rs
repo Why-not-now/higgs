@@ -6,7 +6,7 @@ use crate::property::{AntiTrait, Antiness, Direction};
 
 use super::{Particle, ParticleTrait};
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
 pub struct Electron {
     anti: Antiness,
 }
