@@ -27,6 +27,7 @@ dependencies = [
  "enum_dispatch",
  "ndarray",
  "slotmap",
+ "sorted-vec",
 ]
 
 [[package]]
@@ -117,6 +118,12 @@ checksum = "dbff4acf519f630b3a3ddcfaea6c06b42174d9a44bc70c620e9ed1649d58b82a"
 dependencies = [
  "version_check",
 ]
+
+[[package]]
+name = "sorted-vec"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6734caf0b6f51addd5eeacca12fb39b2c6c14e8d4f3ac42f3a78955c0467458"
 
 [[package]]
 name = "syn"

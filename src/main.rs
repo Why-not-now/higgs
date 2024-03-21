@@ -8,7 +8,7 @@ use slotmap::new_key_type;
 fn main() {
     new_key_type! { pub struct SolverKey; }
 
-    let mut board = Board::default(7, 8, vec![Ix2(4, 2)].into());
+    let mut board = Board::default(7, 8, vec![Ix2(4, 2).into()].into());
 
     board.add_particle(Electron::default(), Ix2(3, 1));
     board.add_particle(Tau::default(), Ix2(2, 2));

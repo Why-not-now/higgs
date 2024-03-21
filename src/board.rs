@@ -1,14 +1,15 @@
 use ndarray::{Array2, Ix2};
+use sorted_vec::SortedSet;
 
 use crate::obstacle::Obstacle;
+use crate::ordered::OrdIx2;
 use crate::particle::{Particle, ParticleTrait};
-use crate::unordered::UnorderedVec;
 
 #[derive(PartialEq, Eq, Clone, Hash, Debug)]
 pub struct Board {
     width: usize,
     height: usize,
-    goals: UnorderedVec<Ix2>,
+    goals: SortedSet<OrdIx2>,
     particles: Array2<Particle>,
     obstacles: Array2<Obstacle>,
 }
@@ -33,7 +34,7 @@ impl Board {
     pub fn new(
         width: usize,
         height: usize,
-        goals: UnorderedVec<Ix2>,
+        goals: SortedSet<OrdIx2>,
         particles: Array2<Particle>,
         obstacles: Array2<Obstacle>,
     ) -> Self {
@@ -46,7 +47,7 @@ impl Board {
         }
     }
 
-    pub fn default(width: usize, height: usize, goals: UnorderedVec<Ix2>) -> Self {
+    pub fn default(width: usize, height: usize, goals: SortedSet<OrdIx2>) -> Self {
         Self {
             width,
             height,
@@ -59,7 +60,7 @@ impl Board {
     pub fn is_solved(&self) -> bool {
         self.goals
             .iter()
-            .all(|&i| !matches!(self.particles.get(i).unwrap(), Particle::Empty(_)))
+            .all(|&i| !matches!(self.particles.get(*i).unwrap(), Particle::Empty(_)))
     }
 
     pub fn all_moves(&self) -> Vec<Board> {
@@ -153,7 +154,7 @@ mod tests {
 
     #[test]
     fn board_move_particle() {
-        let mut board = Board::default(5, 7, vec![Ix2(1, 0)].into());
+        let mut board = Board::default(5, 7, vec![Ix2(1, 0).into()].into());
         board.add_particle(Electron::default(), Ix2(3, 2));
         assert_eq!(
             board.particles().get([3, 2]),

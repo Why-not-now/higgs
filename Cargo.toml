@@ -9,6 +9,7 @@ edition = "2021"
 ndarray = "0.15.6"
 enum_dispatch = "0.3.12"
 slotmap = "1.0.7"
+sorted-vec = "0.8.3"
 
 [profile.bench]
 debug = true
