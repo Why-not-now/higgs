@@ -10,6 +10,7 @@ pub struct Board {
     width: usize,
     height: usize,
     goals: SortedSet<OrdIx2>,
+    containers: SortedSet<SortedSet<OrdIx2>>,
     particles: Array2<Particle>,
     obstacles: Array2<Obstacle>,
 }
@@ -31,27 +32,12 @@ impl Board {
         self.height
     }
 
-    pub fn new(
-        width: usize,
-        height: usize,
-        goals: SortedSet<OrdIx2>,
-        particles: Array2<Particle>,
-        obstacles: Array2<Obstacle>,
-    ) -> Self {
+    pub fn new(width: usize, height: usize, goals: SortedSet<OrdIx2>) -> Self {
         Self {
             width,
             height,
             goals,
-            particles,
-            obstacles,
-        }
-    }
-
-    pub fn default(width: usize, height: usize, goals: SortedSet<OrdIx2>) -> Self {
-        Self {
-            width,
-            height,
-            goals,
+            containers: SortedSet::new(),
             particles: Array2::default([width, height]),
             obstacles: Array2::default([width, height]),
         }
@@ -154,7 +140,7 @@ mod tests {
 
     #[test]
     fn board_move_particle() {
-        let mut board = Board::default(5, 7, vec![Ix2(1, 0).into()].into());
+        let mut board = Board::new(5, 7, vec![Ix2(1, 0).into()].into());
         board.add_particle(Electron::default(), Ix2(3, 2));
         assert_eq!(
             board.particles().get([3, 2]),

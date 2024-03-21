@@ -91,7 +91,7 @@ mod tests {
     fn move_neutron_edge() {
         let width = 5;
         let height = 7;
-        let mut board = Board::default(width, height, vec![].into());
+        let mut board = Board::new(width, height, vec![].into());
 
         let x = 3;
         let y = 2;
@@ -136,7 +136,7 @@ mod tests {
     fn move_neutron_edge_flatten() {
         let width = 5;
         let height = 7;
-        let mut board = Board::default(width, height, vec![].into());
+        let mut board = Board::new(width, height, vec![].into());
 
         let top_left_index = Ix2(0, 0);
         let bottom_right_index = Ix2(width - 1, height - 1);
@@ -168,7 +168,7 @@ mod tests {
     fn move_neutron_collide() {
         let width = 7;
         let height = 9;
-        let mut board = Board::default(width, height, vec![].into());
+        let mut board = Board::new(width, height, vec![].into());
 
         let x = 3;
         let y = 2;
@@ -215,7 +215,7 @@ mod tests {
     fn move_neutron_obstacle() {
         let width = 7;
         let height = 9;
-        let mut board = Board::default(width, height, vec![].into());
+        let mut board = Board::new(width, height, vec![].into());
 
         let x = 3;
         let y = 2;
