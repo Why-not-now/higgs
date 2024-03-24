@@ -81,6 +81,10 @@ impl Board {
         self.obstacles[pos] = Obstacle::default();
     }
 
+    pub fn add_container(&mut self) {
+        todo!()
+    }
+
     pub fn left_axis_indices(&self, pos: Ix2) -> impl Iterator<Item = Ix2> {
         let x = pos[0];
         let y = pos[1];

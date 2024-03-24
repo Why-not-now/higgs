@@ -7,7 +7,9 @@ pub mod property;
 pub mod solver;
 pub mod tree;
 pub mod unordered;
-mod ordered;
+pub mod ordered;
+pub mod object;
+pub mod container;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
