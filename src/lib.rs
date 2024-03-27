@@ -1,15 +1,15 @@
 #![allow(dead_code)]
 
 pub mod board;
+pub mod container;
+pub mod object;
 pub mod obstacle;
+pub mod ordered;
 pub mod particle;
 pub mod property;
 pub mod solver;
 pub mod tree;
 pub mod unordered;
-pub mod ordered;
-pub mod object;
-pub mod container;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right

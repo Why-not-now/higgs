@@ -1,5 +1,5 @@
-use std::ops::{Deref, DerefMut};
 use std::cmp::Ordering;
+use std::ops::{Deref, DerefMut};
 
 use ndarray::Ix2 as UnOrdIx2;
 

@@ -66,7 +66,12 @@ impl<K: Key> Solver<K> {
         self.next_states = Vec::new();
 
         for &current_key in &current_states {
-            for next_board in self.tree.get_value(current_key).expect("Board not found").all_moves() {
+            for next_board in self
+                .tree
+                .get_value(current_key)
+                .expect("Board not found")
+                .all_moves()
+            {
                 match self.board_to_key.get(&next_board) {
                     Some(next_key) => {
                         if self.next_states.contains(next_key) {

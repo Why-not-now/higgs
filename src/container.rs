@@ -1,14 +1,25 @@
-use crate::object::Object;
+use std::collections::BTreeMap;
+
+use sorted_vec::SortedVec;
+
+use crate::ordered::OrdIx2;
 
 use self::nucleus::NucleusParticle;
 
 mod nucleus;
 
-pub trait ContainerTrait {
-    fn components(&self) -> Vec<Object>;
-}
+pub type Contents = SortedVec<Component>;
+pub type ContainerLUT = BTreeMap<Component, (Container, Contents)>;
+
+pub trait ContainerTrait {}
 
 #[derive(PartialEq, Eq, Clone, Hash, Debug, PartialOrd, Ord)]
 pub enum Container {
-    NucleusParticle(NucleusParticle)
+    NucleusParticle(NucleusParticle),
+}
+
+#[derive(PartialEq, Eq, Clone, Hash, Debug, PartialOrd, Ord)]
+pub enum Component {
+    Particle(OrdIx2),
+    Container(Contents),
 }
