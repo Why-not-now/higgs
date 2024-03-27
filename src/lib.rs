@@ -2,7 +2,6 @@
 
 pub mod board;
 pub mod container;
-pub mod object;
 pub mod obstacle;
 pub mod ordered;
 pub mod particle;
