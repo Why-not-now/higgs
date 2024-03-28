@@ -1,6 +1,7 @@
 use ndarray::{Array2, Ix2};
 use sorted_vec::SortedSet;
 
+use crate::container::{Container, ContainerLUT, Contents, ContentsLUT};
 use crate::obstacle::Obstacle;
 use crate::ordered::OrdIx2;
 use crate::particle::{Particle, ParticleTrait};
@@ -10,7 +11,8 @@ pub struct Board {
     width: usize,
     height: usize,
     goals: SortedSet<OrdIx2>,
-    containers: SortedSet<SortedSet<OrdIx2>>,
+    contents_lut: ContentsLUT,
+    container_lut: ContainerLUT,
     particles: Array2<Particle>,
     obstacles: Array2<Obstacle>,
 }
@@ -37,7 +39,8 @@ impl Board {
             width,
             height,
             goals,
-            containers: SortedSet::new(),
+            contents_lut: ContentsLUT::new(),
+            container_lut: ContainerLUT::new(),
             particles: Array2::default([width, height]),
             obstacles: Array2::default([width, height]),
         }
@@ -81,8 +84,18 @@ impl Board {
         self.obstacles[pos] = Obstacle::default();
     }
 
-    pub fn add_container(&mut self) {
-        todo!()
+    pub fn add_container(&mut self, contents: Contents, container: Container) {
+        for component in contents.iter() {
+            self.contents_lut.insert(component.clone(), contents.clone());
+        }
+        self.container_lut.insert(contents, container);
+    }
+
+    pub fn remove_container(&mut self, contents: &Contents) -> Option<Container> {
+        for component in contents.iter() {
+            self.contents_lut.remove(component);
+        }
+        self.container_lut.remove(contents)
     }
 
     pub fn left_axis_indices(&self, pos: Ix2) -> impl Iterator<Item = Ix2> {
