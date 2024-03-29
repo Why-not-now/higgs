@@ -60,33 +60,36 @@ impl Board {
             .collect()
     }
 
-    pub fn move_particle(&mut self, from_pos: Ix2, to_pos: Ix2) {
-        self.particles[to_pos] = *match self.particles.get(from_pos) {
-            Some(particle) => particle,
-            None => return,
-        };
-        self.particles[from_pos] = Particle::default();
+    pub fn move_particle(&mut self, from_pos: Ix2, to_pos: Ix2) -> Particle {
+        self.particles.swap(from_pos, to_pos);
+
+        std::mem::take(
+            self.particles
+                .get_mut(from_pos)
+                .expect("out of index should had be panicked by swap"),
+        )
     }
 
     pub fn add_particle(&mut self, particle: impl Into<Particle>, pos: Ix2) {
         self.particles[pos] = particle.into();
     }
 
-    pub fn remove_particle(&mut self, pos: Ix2) {
-        self.particles[pos] = Particle::default();
+    pub fn remove_particle(&mut self, pos: Ix2) -> Option<Particle> {
+        Some(std::mem::take(&mut *self.particles.get_mut(pos)?))
     }
 
     pub fn add_obstacle(&mut self, obstacle: impl Into<Obstacle>, pos: Ix2) {
         self.obstacles[pos] = obstacle.into();
     }
 
-    pub fn remove_obstacle(&mut self, pos: Ix2) {
-        self.obstacles[pos] = Obstacle::default();
+    pub fn remove_obstacle(&mut self, pos: Ix2) -> Option<Obstacle> {
+        Some(std::mem::take(&mut *self.obstacles.get_mut(pos)?))
     }
 
     pub fn add_container(&mut self, contents: Contents, container: Container) {
         for component in contents.iter() {
-            self.contents_lut.insert(component.clone(), contents.clone());
+            self.contents_lut
+                .insert(component.clone(), contents.clone());
         }
         self.container_lut.insert(contents, container);
     }
