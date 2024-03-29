@@ -1,19 +1,28 @@
 use std::collections::BTreeMap;
 
-use sorted_vec::SortedVec;
+use sorted_vec::SortedSet;
 
 use crate::ordered::OrdIx2;
+use crate::property::Colour;
 
 use self::nucleus::NucleusParticle;
 
 mod nucleus;
 
-pub type Contents = SortedVec<Component>;
+pub type Contents = SortedSet<Component>;
 pub type ContentsLUT = BTreeMap<Component, Contents>;
 pub type ContainerLUT = BTreeMap<Contents, Container>;
 
 pub trait ContainerTrait {
     fn contents(&self) -> Contents;
+
+    fn charge(&self) -> u32 {
+        0
+    }
+
+    fn colour(&self) -> Colour {
+        Colour::White
+    }
 }
 
 #[derive(PartialEq, Eq, Clone, Hash, Debug, PartialOrd, Ord)]
