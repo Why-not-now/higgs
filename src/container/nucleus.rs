@@ -10,13 +10,17 @@ pub struct NucleusParticle {
     antiness: Antiness,
     protons: SortedSet<OrdIx2>,
     neutrons: SortedSet<OrdIx2>,
+    contents: SortedSet<OrdIx2>,
 }
 
 impl ContainerTrait for NucleusParticle {
+    fn all_moves(&self, board: Board) -> Vec<Board> {
+        let a: Vec<_> = self.contents.iter().map(|&i| board.left_axis_indices(*i)).collect();
+        todo!()
+    }
+
     fn contents(&self) -> Contents {
-        let mut res: Vec<_> = self.protons.iter().map(|&i| i.into()).collect();
-        res.extend(self.neutrons.iter().map(|&i| i.into()));
-        res.into()
+        self.contents.iter().map(|&i| i.into()).collect::<Vec<_>>().into()
     }
 
     fn charge(&self) -> u32 {
@@ -27,7 +31,10 @@ impl ContainerTrait for NucleusParticle {
 
 impl NucleusParticle {
     pub fn new(antiness: Antiness, protons: SortedSet<OrdIx2>, neutrons: SortedSet<OrdIx2>) -> Self {
-        Self { antiness, protons, neutrons }
+        let mut contents: Vec<_> = protons.to_vec();
+        contents.extend(neutrons.iter());
+        let contents = contents.into();
+        Self { antiness, protons, neutrons, contents }
     }
 
     pub fn one_move(&self, direction: Direction) -> Board {

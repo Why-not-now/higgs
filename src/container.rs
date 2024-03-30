@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 
 use sorted_vec::SortedSet;
 
+use crate::board::Board;
 use crate::ordered::OrdIx2;
 use crate::property::Colour;
 
@@ -14,6 +15,7 @@ pub type ContentsLUT = BTreeMap<Component, Contents>;
 pub type ContainerLUT = BTreeMap<Contents, Container>;
 
 pub trait ContainerTrait {
+    fn all_moves(&self, board: Board) -> Vec<Board>;
     fn contents(&self) -> Contents;
 
     fn charge(&self) -> u32 {
