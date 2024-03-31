@@ -47,7 +47,9 @@ impl<K: Key> Solver<K> {
 
     pub fn verbose_solve(&mut self) -> Vec<K> {
         let mut solved = self.one_step();
+        let n = 1;
         while !self.next_states.is_empty() && solved.is_empty() {
+            println!("solving {n} step");
             solved = self.one_step();
         }
 

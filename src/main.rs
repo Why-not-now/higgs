@@ -27,7 +27,7 @@ fn main() {
     let mut solver: Solver<SolverKey> = Solver::new(board);
 
     let now = Instant::now();
-    let mut solutions = &solver.solve();
+    let mut solutions = &solver.verbose_solve();
     let elapsed = now.elapsed();
     println!("Solve time: {:.2?}", elapsed);
     let mut steps = Vec::new();
