@@ -1,3 +1,5 @@
+use std::cmp::min;
+
 use ndarray::{Array2, Ix2};
 use sorted_vec::SortedSet;
 
@@ -58,6 +60,28 @@ impl Board {
             .filter(|&(_pos, particle)| !matches!(particle, Particle::Empty(_)))
             .flat_map(|(pos, particle)| particle.all_moves(self, Ix2(pos.0, pos.1)))
             .collect()
+    }
+
+    pub fn annihilate(&mut self, pos: Ix2, strength: usize) -> Option<Particle> {
+        let x = pos[0];
+        let y = pos[1];
+
+        let min_x = x.saturating_sub(strength);
+        let min_y = y.saturating_sub(strength);
+        let max_x = min(x + strength + 1, self.width);
+        let max_y = min(y + strength + 1, self.height);
+
+        for j in min_y..max_y {
+            for i in min_x..max_x {
+                if i.abs_diff(x) + j.abs_diff(y) <= strength {
+                    self.remove_obstacle(Ix2(i, j));
+                }
+            }
+        }
+
+        Some(std::mem::take(
+            self.particles.get_mut(pos).expect("pos is out of index"),
+        ))
     }
 
     pub fn move_particle(&mut self, from_pos: Ix2, to_pos: Ix2) -> Option<Particle> {

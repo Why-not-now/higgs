@@ -52,3 +52,12 @@ pub enum Direction {
     Left,
     Up,
 }
+
+#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
+pub enum Step {
+    #[default]
+    Continue,
+    Shift,
+    Annihilate(usize),
+    Remove,
+}

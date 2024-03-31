@@ -3,18 +3,9 @@ use ndarray::Ix2;
 use crate::board::Board;
 use crate::obstacle::Obstacle;
 use crate::particle::Particle;
-use crate::property::Antiness;
+use crate::property::{Antiness, Step};
 
 use super::ParticleTrait;
-
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
-enum Step {
-    #[default]
-    Continue,
-    Shift,
-    Annihilate(u32),
-    Remove,
-}
 
 #[derive(PartialEq, Eq, Clone, Copy, Hash, Debug, Default, PartialOrd, Ord)]
 pub struct Neutron {
@@ -47,9 +38,10 @@ impl Neutron {
         let mut previous = match step {
             Step::Continue => next,
             Step::Shift => return None,
-            Step::Annihilate(_) => {
+            Step::Annihilate(strength) => {
                 let mut ret_board = board.clone();
-                ret_board.move_particle(pos, next);
+                ret_board.remove_particle(pos);
+                ret_board.annihilate(next, strength);
                 return Some(ret_board);
             }
             Step::Remove => {
@@ -84,7 +76,7 @@ impl Neutron {
         Some(ret_board)
     }
 
-    fn one_step(&self, board: &Board, next: Ix2) -> Step {
+    pub fn one_step(&self, board: &Board, next: Ix2) -> Step {
         match board.particles().get(next).unwrap() {
             Particle::Empty(_) => (),
             Particle::Neutron(n) => match n.anti == self.anti {
