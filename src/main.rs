@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use higgs::board::Board;
 use higgs::obstacle::{block::Block, hole::Hole};
 use higgs::particle::{Electron, Neutron, Tau};
@@ -24,7 +26,10 @@ fn main() {
 
     let mut solver: Solver<SolverKey> = Solver::new(board);
 
+    let now = Instant::now();
     let mut solutions = &solver.solve();
+    let elapsed = now.elapsed();
+    println!("Solve time: {:.2?}", elapsed);
     let mut steps = Vec::new();
     while let Some(&step) = solutions.first() {
         steps.push(step);

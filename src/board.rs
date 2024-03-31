@@ -60,14 +60,17 @@ impl Board {
             .collect()
     }
 
-    pub fn move_particle(&mut self, from_pos: Ix2, to_pos: Ix2) -> Particle {
+    pub fn move_particle(&mut self, from_pos: Ix2, to_pos: Ix2) -> Option<Particle> {
+        if from_pos == to_pos {
+            return None;
+        }
         self.particles.swap(from_pos, to_pos);
 
-        std::mem::take(
+        Some(std::mem::take(
             self.particles
                 .get_mut(from_pos)
                 .expect("out of index should had be panicked by swap"),
-        )
+        ))
     }
 
     pub fn add_particle(&mut self, particle: impl Into<Particle>, pos: Ix2) {
@@ -99,6 +102,34 @@ impl Board {
             self.contents_lut.remove(component);
         }
         self.container_lut.remove(contents)
+    }
+
+    pub fn left(&self, pos: Ix2) -> Option<Ix2> {
+        if pos[0] == 0 {
+            return None;
+        };
+        Some(pos - Ix2(1, 0))
+    }
+
+    pub fn right(&self, pos: Ix2) -> Option<Ix2> {
+        if pos[0] >= self.width - 1 {
+            return None;
+        };
+        Some(pos + Ix2(1, 0))
+    }
+
+    pub fn up(&self, pos: Ix2) -> Option<Ix2> {
+        if pos[1] == 0 {
+            return None;
+        };
+        Some(pos - Ix2(0, 1))
+    }
+
+    pub fn down(&self, pos: Ix2) -> Option<Ix2> {
+        if pos[1] >= self.height - 1 {
+            return None;
+        };
+        Some(pos + Ix2(0, 1))
     }
 
     pub fn left_axis_indices(&self, pos: Ix2) -> impl Iterator<Item = Ix2> {

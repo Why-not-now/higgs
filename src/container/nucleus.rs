@@ -1,6 +1,6 @@
-use crate::{board::Board, property::Antiness};
 use crate::ordered::OrdIx2;
 use crate::property::Direction;
+use crate::{board::Board, property::Antiness};
 use sorted_vec::SortedSet;
 
 use super::{ContainerTrait, Contents};
@@ -15,12 +15,15 @@ pub struct NucleusParticle {
 
 impl ContainerTrait for NucleusParticle {
     fn all_moves(&self, board: Board) -> Vec<Board> {
-        let a: Vec<_> = self.contents.iter().map(|&i| board.left_axis_indices(*i)).collect();
         todo!()
     }
 
     fn contents(&self) -> Contents {
-        self.contents.iter().map(|&i| i.into()).collect::<Vec<_>>().into()
+        self.contents
+            .iter()
+            .map(|&i| i.into())
+            .collect::<Vec<_>>()
+            .into()
     }
 
     fn charge(&self) -> u32 {
@@ -30,11 +33,20 @@ impl ContainerTrait for NucleusParticle {
 }
 
 impl NucleusParticle {
-    pub fn new(antiness: Antiness, protons: SortedSet<OrdIx2>, neutrons: SortedSet<OrdIx2>) -> Self {
+    pub fn new(
+        antiness: Antiness,
+        protons: SortedSet<OrdIx2>,
+        neutrons: SortedSet<OrdIx2>,
+    ) -> Self {
         let mut contents: Vec<_> = protons.to_vec();
         contents.extend(neutrons.iter());
         let contents = contents.into();
-        Self { antiness, protons, neutrons, contents }
+        Self {
+            antiness,
+            protons,
+            neutrons,
+            contents,
+        }
     }
 
     pub fn one_move(&self, direction: Direction) -> Board {
