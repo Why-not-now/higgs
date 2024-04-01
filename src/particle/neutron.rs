@@ -3,7 +3,7 @@ use ndarray::Ix2;
 use crate::board::Board;
 use crate::obstacle::Obstacle;
 use crate::particle::Particle;
-use crate::property::{Antiness, Step};
+use crate::property::{Antiness, Direction};
 
 use super::ParticleTrait;
 
@@ -15,10 +15,10 @@ pub struct Neutron {
 impl ParticleTrait for Neutron {
     fn all_moves(&self, board: &Board, pos: Ix2) -> Vec<Board> {
         vec![
-            self.one_move(board, pos, |i| board.right(i)),
-            self.one_move(board, pos, |i| board.down(i)),
-            self.one_move(board, pos, |i| board.left(i)),
-            self.one_move(board, pos, |i| board.up(i)),
+            self.one_move(board, pos, Direction::Right),
+            self.one_move(board, pos, Direction::Down),
+            self.one_move(board, pos, Direction::Left),
+            self.one_move(board, pos, Direction::Up),
         ]
         .into_iter()
         .flatten()
@@ -31,9 +31,9 @@ impl Neutron {
         &self,
         board: &Board,
         pos: Ix2,
-        move_fn: impl Fn(Ix2) -> Option<Ix2>,
+        direction: Direction,
     ) -> Option<Board> {
-        let next = move_fn(pos)?;
+        let next = board.move_direction(direction, pos)?;
         match board.particles().get(next).unwrap() {
             Particle::Empty(_) => (),
             Particle::Neutron(n) => match n.anti == self.anti {
@@ -58,7 +58,7 @@ impl Neutron {
             },
         };
         let mut previous = next;
-        while let Some(next) = move_fn(previous) {
+        while let Some(next) = board.move_direction(direction, pos) {
             match board.particles().get(next).unwrap() {
                 Particle::Empty(_) => (),
                 Particle::Neutron(n) => match n.anti == self.anti {

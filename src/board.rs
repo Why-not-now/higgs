@@ -7,6 +7,7 @@ use crate::container::{Container, ContainerLUT, Contents, ContentsLUT};
 use crate::obstacle::Obstacle;
 use crate::ordered::OrdIx2;
 use crate::particle::{Particle, ParticleTrait};
+use crate::property::Direction;
 
 #[derive(PartialEq, Eq, Clone, Hash, Debug)]
 pub struct Board {
@@ -150,6 +151,15 @@ impl Board {
             return None;
         };
         Some(pos + Ix2(0, 1))
+    }
+
+    pub fn move_direction(&self, direction: Direction, pos: Ix2) -> Option<Ix2> {
+        match direction {
+            Direction::Right => self.right(pos),
+            Direction::Down => self.down(pos),
+            Direction::Left => self.left(pos),
+            Direction::Up => self.up(pos),
+        }
     }
 
     pub fn left_axis_indices(&self, pos: Ix2) -> impl Iterator<Item = Ix2> {
