@@ -58,7 +58,7 @@ impl Neutron {
             },
         };
         let mut previous = next;
-        while let Some(next) = board.move_direction(direction, pos) {
+        while let Some(next) = board.move_direction(direction, previous) {
             match board.particles().get(next).unwrap() {
                 Particle::Empty(_) => (),
                 Particle::Neutron(n) => match n.anti == self.anti {
