@@ -34,63 +34,71 @@ impl Neutron {
         move_fn: impl Fn(Ix2) -> Option<Ix2>,
     ) -> Option<Board> {
         let next = move_fn(pos)?;
-        let mut step = self.one_step(board, next);
-        let mut previous = match step {
-            Step::Continue => next,
-            Step::Shift => return None,
-            Step::Annihilate(strength) => {
-                let mut ret_board = board.clone();
-                ret_board.remove_particle(pos);
-                ret_board.annihilate(next, strength);
-                return Some(ret_board);
-            }
-            Step::Remove => {
-                let mut ret_board = board.clone();
-                ret_board.remove_particle(pos);
-                return Some(ret_board);
-            }
+        match board.particles().get(next).unwrap() {
+            Particle::Empty(_) => (),
+            Particle::Neutron(n) => match n.anti == self.anti {
+                true => return None,
+                false => {
+                    let mut ret_board = board.clone();
+                    ret_board.remove_particle(pos);
+                    ret_board.remove_particle(next);
+                    ret_board.annihilate(next, 3);
+                    return Some(ret_board);
+                },
+            },
+            _ => return None,
         };
+        match board.obstacles().get(next).unwrap() {
+            Obstacle::Empty(_) => (),
+            Obstacle::Block(_) => return None,
+            Obstacle::Hole(_) => {
+                let mut ret_board = board.clone();
+                ret_board.remove_particle(pos);
+                return Some(ret_board);
+            },
+        };
+        let mut previous = next;
         while let Some(next) = move_fn(previous) {
-            step = self.one_step(board, next);
-            previous = match step {
-                Step::Continue => next,
-                Step::Shift => {
+            match board.particles().get(next).unwrap() {
+                Particle::Empty(_) => (),
+                Particle::Neutron(n) => match n.anti == self.anti {
+                    true => {
+                        let mut ret_board = board.clone();
+                        ret_board.move_particle(pos, previous);
+                        return Some(ret_board);
+                    },
+                    false => {
+                        let mut ret_board = board.clone();
+                        ret_board.remove_particle(pos);
+                        ret_board.remove_particle(next);
+                        ret_board.annihilate(next, 3);
+                        return Some(ret_board);
+                    },
+                },
+                _ => {
                     let mut ret_board = board.clone();
                     ret_board.move_particle(pos, previous);
                     return Some(ret_board);
-                }
-                Step::Annihilate(_) => {
+                },
+            };
+            match board.obstacles().get(next).unwrap() {
+                Obstacle::Empty(_) => (),
+                Obstacle::Block(_) => {
                     let mut ret_board = board.clone();
-                    ret_board.move_particle(pos, next);
+                    ret_board.move_particle(pos, previous);
                     return Some(ret_board);
-                }
-                Step::Remove => {
+                },
+                Obstacle::Hole(_) => {
                     let mut ret_board = board.clone();
                     ret_board.remove_particle(pos);
                     return Some(ret_board);
-                }
-            }
+                },
+            };
+            previous = next
         }
         let mut ret_board = board.clone();
         ret_board.move_particle(pos, previous)?;
         Some(ret_board)
-    }
-
-    pub fn one_step(&self, board: &Board, next: Ix2) -> Step {
-        match board.particles().get(next).unwrap() {
-            Particle::Empty(_) => (),
-            Particle::Neutron(n) => match n.anti == self.anti {
-                true => return Step::Shift,
-                false => return Step::Annihilate(3),
-            },
-            _ => return Step::Shift,
-        };
-        match board.obstacles().get(next).unwrap() {
-            Obstacle::Empty(_) => (),
-            Obstacle::Block(_) => return Step::Shift,
-            Obstacle::Hole(_) => return Step::Remove,
-        };
-        Step::Continue
     }
 }
 

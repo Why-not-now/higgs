@@ -62,7 +62,7 @@ impl Board {
             .collect()
     }
 
-    pub fn annihilate(&mut self, pos: Ix2, strength: usize) -> Option<Particle> {
+    pub fn annihilate(&mut self, pos: Ix2, strength: usize) {
         let x = pos[0];
         let y = pos[1];
 
@@ -78,10 +78,6 @@ impl Board {
                 }
             }
         }
-
-        Some(std::mem::take(
-            self.particles.get_mut(pos).expect("pos is out of index"),
-        ))
     }
 
     pub fn move_particle(&mut self, from_pos: Ix2, to_pos: Ix2) -> Option<Particle> {
