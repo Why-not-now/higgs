@@ -3,7 +3,7 @@ use std::cmp::min;
 use ndarray::{Array2, Ix2};
 use sorted_vec::SortedSet;
 
-use crate::container::{Container, ContainerLUT, Contents, ContentsLUT};
+use crate::container::{Component, Container, ContainerLUT, Contents, ContentsLUT};
 use crate::obstacle::Obstacle;
 use crate::ordered::OrdIx2;
 use crate::particle::{Particle, ParticleTrait};
@@ -120,6 +120,9 @@ impl Board {
 
     pub fn remove_container(&mut self, contents: &Contents) -> Option<Container> {
         for component in contents.iter() {
+            if let Component::Container(contents) = component {
+                self.remove_container(contents);
+            };
             self.contents_lut.remove(component);
         }
         self.container_lut.remove(contents)

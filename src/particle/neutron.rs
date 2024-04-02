@@ -27,12 +27,7 @@ impl ParticleTrait for Neutron {
 }
 
 impl Neutron {
-    fn one_move(
-        &self,
-        board: &Board,
-        pos: Ix2,
-        direction: Direction,
-    ) -> Option<Board> {
+    fn one_move(&self, board: &Board, pos: Ix2, direction: Direction) -> Option<Board> {
         let move_fn = |i| board.move_direction(direction, i);
         let next = move_fn(pos)?;
         match board.particles().get(next).unwrap() {
@@ -45,7 +40,7 @@ impl Neutron {
                     ret_board.remove_particle(next);
                     ret_board.annihilate(next, 3);
                     return Some(ret_board);
-                },
+                }
             },
             _ => return None,
         };
@@ -56,48 +51,43 @@ impl Neutron {
                 let mut ret_board = board.clone();
                 ret_board.remove_particle(pos);
                 return Some(ret_board);
-            },
+            }
         };
         let mut previous = next;
+        let mut ret_board = board.clone();
         while let Some(next) = move_fn(previous) {
             match board.particles().get(next).unwrap() {
                 Particle::Empty(_) => (),
                 Particle::Neutron(n) => match n.anti == self.anti {
                     true => {
-                        let mut ret_board = board.clone();
                         ret_board.move_particle(pos, previous);
                         return Some(ret_board);
-                    },
+                    }
                     false => {
-                        let mut ret_board = board.clone();
                         ret_board.remove_particle(pos);
                         ret_board.remove_particle(next);
                         ret_board.annihilate(next, 3);
                         return Some(ret_board);
-                    },
+                    }
                 },
                 _ => {
-                    let mut ret_board = board.clone();
                     ret_board.move_particle(pos, previous);
                     return Some(ret_board);
-                },
+                }
             };
             match board.obstacles().get(next).unwrap() {
                 Obstacle::Empty(_) => (),
                 Obstacle::Block(_) => {
-                    let mut ret_board = board.clone();
                     ret_board.move_particle(pos, previous);
                     return Some(ret_board);
-                },
+                }
                 Obstacle::Hole(_) => {
-                    let mut ret_board = board.clone();
                     ret_board.remove_particle(pos);
                     return Some(ret_board);
-                },
+                }
             };
             previous = next
         }
-        let mut ret_board = board.clone();
         ret_board.move_particle(pos, previous)?;
         Some(ret_board)
     }
