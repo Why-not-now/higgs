@@ -31,15 +31,12 @@ impl ParticleTrait for Electron {
         }
     }
 
+    
+
     fn all_moves(&self, board: &Board, pos: Ix2) -> Vec<Board> {
         self.check_electric(board, pos)
             .iter()
-            .filter_map(|direction| match direction {
-                Direction::Right => self.one_move(board, pos, board.right_axis_indices(pos)),
-                Direction::Down => self.one_move(board, pos, board.down_axis_indices(pos)),
-                Direction::Left => self.one_move(board, pos, board.left_axis_indices(pos)),
-                Direction::Up => self.one_move(board, pos, board.up_axis_indices(pos)),
-            })
+            .filter_map(|&direction| self.one_move(board, pos, direction))
             .collect()
     }
 }
@@ -49,8 +46,8 @@ impl Electron {
         let mut ret_directions: Vec<Direction> = Vec::new();
 
         let x = self.charge()
-            * (Self::next_charge(board, &mut board.right_axis_indices(pos))
-                - Self::next_charge(board, &mut board.left_axis_indices(pos)));
+            * (Self::next_charge(board, pos, Direction::Right)
+                - Self::next_charge(board, pos, Direction::Left));
         if x >= 0 {
             ret_directions.push(Direction::Left)
         }
@@ -59,8 +56,8 @@ impl Electron {
         }
 
         let y = self.charge()
-            * (Self::next_charge(board, &mut board.down_axis_indices(pos))
-                - Self::next_charge(board, &mut board.up_axis_indices(pos)));
+            * (Self::next_charge(board, pos, Direction::Down)
+                - Self::next_charge(board, pos, Direction::Up));
         if y >= 0 {
             ret_directions.push(Direction::Up)
         }
@@ -71,32 +68,39 @@ impl Electron {
         ret_directions
     }
 
-    fn next_charge(board: &Board, path_indices: &mut impl Iterator<Item = Ix2>) -> i32 {
-        path_indices
-            .map(|i| board.particles().get(i))
-            .find_map(|p| {
-                let charge = p.unwrap().charge();
-                if charge != 0 {
-                    Some(charge)
-                } else {
-                    None
-                }
-            })
-            .unwrap_or(0)
+    fn next_charge(board: &Board, pos: Ix2, direction: Direction) -> i32 {
+        while let Some(pos) = board.move_direction(direction, pos) {
+            let charge = board
+                .particles()
+                .get(pos)
+                .expect("Particle not found.")
+                .charge();
+            if charge != 0 {
+                return charge;
+            }
+        }
+
+        0
     }
 
-    fn one_move(
-        &self,
-        board: &Board,
-        pos: Ix2,
-        mut path_indices: impl Iterator<Item = Ix2>,
-    ) -> Option<Board> {
-        let first = path_indices.next()?;
-        match board.particles().get(first).unwrap() {
+    fn one_move(&self, board: &Board, pos: Ix2, direction: Direction) -> Option<Board> {
+        let move_fn = |i| board.move_direction(direction, i);
+        let next = move_fn(pos)?;
+        match board.particles().get(next).unwrap() {
             Particle::Empty(_) => (),
+            Particle::Electron(e) => match e.anti == self.anti {
+                true => return None,
+                false => {
+                    let mut ret_board = board.clone();
+                    ret_board.remove_particle(pos);
+                    ret_board.remove_particle(next);
+                    ret_board.annihilate(next, 3);
+                    return Some(ret_board);
+                }
+            },
             _ => return None,
         };
-        match board.obstacles().get(first).unwrap() {
+        match board.obstacles().get(next).unwrap() {
             Obstacle::Empty(_) => (),
             Obstacle::Block(_) => return None,
             Obstacle::Hole(_) => {
@@ -106,35 +110,42 @@ impl Electron {
             }
         };
 
-        let mut last = first;
-        for next in path_indices {
+        let mut previous = next;
+        let mut ret_board = board.clone();
+        while let Some(next) = move_fn(previous) {
             match board.particles().get(next).unwrap() {
                 Particle::Empty(_) => (),
+                Particle::Electron(e) => match e.anti == self.anti {
+                    true => {
+                        ret_board.move_particle(pos, previous);
+                        return Some(ret_board);
+                    }
+                    false => {
+                        ret_board.remove_particle(pos);
+                        ret_board.remove_particle(next);
+                        ret_board.annihilate(next, 3);
+                        return Some(ret_board);
+                    }
+                },
                 _ => {
-                    let mut ret_board = board.clone();
-                    ret_board.move_particle(pos, last);
+                    ret_board.move_particle(pos, previous);
                     return Some(ret_board);
                 }
             };
             match board.obstacles().get(next).unwrap() {
                 Obstacle::Empty(_) => (),
                 Obstacle::Block(_) => {
-                    let mut ret_board = board.clone();
-                    ret_board.move_particle(pos, last);
+                    ret_board.move_particle(pos, previous);
                     return Some(ret_board);
                 }
                 Obstacle::Hole(_) => {
-                    let mut ret_board = board.clone();
                     ret_board.remove_particle(pos);
                     return Some(ret_board);
                 }
             };
-
-            last = next;
+            previous = next
         }
-
-        let mut ret_board = board.clone();
-        ret_board.move_particle(pos, last);
+        ret_board.move_particle(pos, previous)?;
         Some(ret_board)
     }
 }

@@ -53,6 +53,7 @@ impl Neutron {
                 return Some(ret_board);
             }
         };
+
         let mut previous = next;
         let mut ret_board = board.clone();
         while let Some(next) = move_fn(previous) {

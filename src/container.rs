@@ -18,7 +18,7 @@ pub trait ContainerTrait {
     fn all_moves(&self, board: Board) -> Vec<Board>;
     fn contents(&self) -> Contents;
 
-    fn charge(&self) -> u32 {
+    fn charge(&self) -> i32 {
         0
     }
 

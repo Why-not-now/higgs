@@ -26,9 +26,13 @@ impl ContainerTrait for NucleusParticle {
             .into()
     }
 
-    fn charge(&self) -> u32 {
-        let protons: u32 = self.protons.len().try_into().expect("too many protons");
-        protons * 3
+    fn charge(&self) -> i32 {
+        let protons: i32 = self.protons.len().try_into().expect("too many protons");
+        protons
+            * match self.antiness {
+                Antiness::Ordinary => 3,
+                Antiness::Anti => -3,
+            }
     }
 }
 
