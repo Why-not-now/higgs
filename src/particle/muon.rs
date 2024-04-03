@@ -67,7 +67,8 @@ impl Muon {
     }
 
     fn next_charge(board: &Board, pos: Ix2, direction: Direction) -> i32 {
-        while let Some(pos) = board.move_direction(direction, pos) {
+        let mut previous = pos;
+        while let Some(pos) = board.move_direction(direction, previous) {
             let charge = board
                 .particles()
                 .get(pos)
@@ -76,6 +77,8 @@ impl Muon {
             if charge != 0 {
                 return charge;
             }
+
+            previous = pos
         }
 
         0
