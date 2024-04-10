@@ -3,7 +3,7 @@ use std::cmp::min;
 use ndarray::{Array2, Ix2};
 use sorted_vec::SortedSet;
 
-use crate::container::{Component, Container, ContainerLUT, Contents, ContentsLUT};
+use crate::container::{Component, Container, ContainerLUT, ContainerTrait, Contents};
 use crate::obstacle::Obstacle;
 use crate::ordered::OrdIx2;
 use crate::particle::{Particle, ParticleTrait};
@@ -14,7 +14,6 @@ pub struct Board {
     width: usize,
     height: usize,
     goals: SortedSet<OrdIx2>,
-    contents_lut: ContentsLUT,
     container_lut: ContainerLUT,
     particles: Array2<Particle>,
     obstacles: Array2<Obstacle>,
@@ -42,7 +41,6 @@ impl Board {
             width,
             height,
             goals,
-            contents_lut: ContentsLUT::new(),
             container_lut: ContainerLUT::new(),
             particles: Array2::default([width, height]),
             obstacles: Array2::default([width, height]),
@@ -110,28 +108,26 @@ impl Board {
         Some(std::mem::take(&mut *self.obstacles.get_mut(pos)?))
     }
 
-    pub fn add_container(&mut self, contents: Contents, container: Container) {
-        for component in contents.iter() {
-            self.contents_lut
-                .insert(component.clone(), contents.clone());
+    pub fn add_container(&mut self, container: Container) {
+        for component in container.contents().iter() {
+            self.container_lut
+                .insert(component.clone(), container.clone());
         }
-        self.container_lut.insert(contents, container);
     }
 
-    pub fn remove_container(&mut self, contents: &Contents) -> Option<Container> {
-        for component in contents.iter() {
-            self.contents_lut.remove(component);
+    pub fn remove_container(&mut self, contents: &Container) {
+        for component in contents.contents().iter() {
+            self.container_lut.remove(component);
         }
-        self.container_lut.remove(contents)
     }
 
-    pub fn top_container(&mut self, contents: &Component) -> Option<&Contents> {
-        let mut previous = contents;
-        let mut result: Option<&Contents> = None;
+    pub fn top_container(&mut self, component: &Component) -> Option<&Container> {
+        let mut previous = component;
         let mut component: Component;
-        while let Some(next) = self.contents_lut.get(previous) {
+        let mut result: Option<&Container> = None;
+        while let Some(next) = self.container_lut.get(previous) {
             result = Some(next);
-            component = next.clone().into();
+            component = Component::from(next.contents().clone());
             previous = &component;
         }
 

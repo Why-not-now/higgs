@@ -12,13 +12,12 @@ use self::nucleus::NucleusParticle;
 mod nucleus;
 
 pub type Contents = SortedSet<Component>;
-pub type ContentsLUT = BTreeMap<Component, Contents>;
-pub type ContainerLUT = BTreeMap<Contents, Container>;
+pub type ContainerLUT = BTreeMap<Component, Container>;
 
 #[enum_dispatch]
 pub trait ContainerTrait {
     fn all_moves(&self, board: Board) -> Vec<Board>;
-    fn contents(&self) -> Contents;
+    fn contents(&self) -> &Contents;
 
     fn charge(&self) -> i32 {
         0

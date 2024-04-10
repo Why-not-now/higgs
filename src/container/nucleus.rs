@@ -4,14 +4,14 @@ use crate::ordered::OrdIx2;
 use crate::property::Direction;
 use crate::{board::Board, property::Antiness};
 
-use super::{ContainerTrait, Contents};
+use super::{Component, ContainerTrait, Contents};
 
 #[derive(PartialEq, Eq, Clone, Hash, Debug, PartialOrd, Ord)]
 pub struct NucleusParticle {
     antiness: Antiness,
     protons: SortedSet<OrdIx2>,
     neutrons: SortedSet<OrdIx2>,
-    contents: SortedSet<OrdIx2>,
+    contents: SortedSet<Component>,
 }
 
 impl ContainerTrait for NucleusParticle {
@@ -19,12 +19,8 @@ impl ContainerTrait for NucleusParticle {
         todo!()
     }
 
-    fn contents(&self) -> Contents {
-        self.contents
-            .iter()
-            .map(|&i| i.into())
-            .collect::<Vec<_>>()
-            .into()
+    fn contents(&self) -> &Contents {
+        &self.contents
     }
 
     fn charge(&self) -> i32 {
@@ -43,9 +39,9 @@ impl NucleusParticle {
         protons: SortedSet<OrdIx2>,
         neutrons: SortedSet<OrdIx2>,
     ) -> Self {
-        let mut contents: Vec<_> = protons.to_vec();
-        contents.extend(neutrons.iter());
-        let contents = contents.into();
+        let mut contents: Vec<_> = protons.iter().map(|&i| Component::Particle(i)).collect();
+        contents.extend(neutrons.iter().map(|&i| Component::Particle(i)));
+        let contents = Contents::from(contents);
         Self {
             antiness,
             protons,
