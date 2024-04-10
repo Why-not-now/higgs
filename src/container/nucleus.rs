@@ -1,7 +1,8 @@
+use sorted_vec::SortedSet;
+
 use crate::ordered::OrdIx2;
 use crate::property::Direction;
 use crate::{board::Board, property::Antiness};
-use sorted_vec::SortedSet;
 
 use super::{ContainerTrait, Contents};
 

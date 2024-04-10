@@ -120,12 +120,22 @@ impl Board {
 
     pub fn remove_container(&mut self, contents: &Contents) -> Option<Container> {
         for component in contents.iter() {
-            if let Component::Container(contents) = component {
-                self.remove_container(contents);
-            };
             self.contents_lut.remove(component);
         }
         self.container_lut.remove(contents)
+    }
+
+    pub fn top_container(&mut self, contents: &Component) -> Option<&Contents> {
+        let mut previous = contents;
+        let mut result: Option<&Contents> = None;
+        let mut component: Component;
+        while let Some(next) = self.contents_lut.get(previous) {
+            result = Some(next);
+            component = next.clone().into();
+            previous = &component;
+        }
+
+        result
     }
 
     pub fn left(&self, pos: Ix2) -> Option<Ix2> {

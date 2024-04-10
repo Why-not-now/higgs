@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+use enum_dispatch::enum_dispatch;
 use sorted_vec::SortedSet;
 
 use crate::board::Board;
@@ -14,6 +15,7 @@ pub type Contents = SortedSet<Component>;
 pub type ContentsLUT = BTreeMap<Component, Contents>;
 pub type ContainerLUT = BTreeMap<Contents, Container>;
 
+#[enum_dispatch]
 pub trait ContainerTrait {
     fn all_moves(&self, board: Board) -> Vec<Board>;
     fn contents(&self) -> Contents;
@@ -45,6 +47,7 @@ impl From<Contents> for Component {
     }
 }
 
+#[enum_dispatch(ContainerTrait)]
 #[derive(PartialEq, Eq, Clone, Hash, Debug, PartialOrd, Ord)]
 pub enum Container {
     NucleusParticle(NucleusParticle),
