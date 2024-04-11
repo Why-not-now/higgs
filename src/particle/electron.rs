@@ -44,8 +44,8 @@ impl Electron {
         let mut ret_directions: Vec<Direction> = Vec::new();
 
         let x = self.charge()
-            * (Self::next_charge(board, pos, Direction::Right)
-                - Self::next_charge(board, pos, Direction::Left));
+            * (board.find_charge_single(pos, Direction::Right)
+                - board.find_charge_single(pos, Direction::Left));
         if x >= 0 {
             ret_directions.push(Direction::Left)
         }
@@ -54,8 +54,8 @@ impl Electron {
         }
 
         let y = self.charge()
-            * (Self::next_charge(board, pos, Direction::Down)
-                - Self::next_charge(board, pos, Direction::Up));
+            * (board.find_charge_single(pos, Direction::Down)
+                - board.find_charge_single(pos, Direction::Up));
         if y >= 0 {
             ret_directions.push(Direction::Up)
         }
@@ -64,23 +64,6 @@ impl Electron {
         }
 
         ret_directions
-    }
-
-    fn next_charge(board: &Board, pos: Ix2, direction: Direction) -> i32 {
-        let mut previous = pos;
-        while let Some(pos) = board.move_direction(direction, previous) {
-            let charge = board
-                .particles()
-                .get(pos)
-                .expect("Particle not found.")
-                .charge();
-            if charge != 0 {
-                return charge;
-            }
-            previous = pos
-        }
-
-        0
     }
 
     fn one_move(&self, board: &Board, pos: Ix2, direction: Direction) -> Option<Board> {
