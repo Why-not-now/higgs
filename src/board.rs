@@ -3,7 +3,9 @@ use std::cmp::min;
 use ndarray::{Array2, Ix2};
 use sorted_vec::SortedSet;
 
-use crate::container::{Component, Container, ContainerLUT, ContainerTrait, Contents};
+use crate::container::{
+    contents_positions, Component, Container, ContainerLUT, ContainerTrait, Contents,
+};
 use crate::obstacle::Obstacle;
 use crate::ordered::OrdIx2;
 use crate::particle::{Particle, ParticleTrait};
@@ -121,17 +123,127 @@ impl Board {
         }
     }
 
-    pub fn top_container(&mut self, component: &Component) -> Option<&Container> {
+    pub fn top_container(&self, component: &Component) -> Option<&Container> {
         let mut previous = component;
-        let mut component: Component;
+        let mut cloned: Component;
         let mut result: Option<&Container> = None;
         while let Some(next) = self.container_lut.get(previous) {
             result = Some(next);
-            component = Component::from(next.contents().clone());
-            previous = &component;
+            cloned = Component::from(next.contents().clone());
+            previous = &cloned;
         }
 
         result
+    }
+
+    pub fn charge(&self, pos: Ix2) -> i32 {
+        if let Some(container) = self.top_container(&Component::Particle(OrdIx2::from(pos))) {
+            container.charge()
+        } else {
+            self.particles()
+                .get(pos)
+                .expect("Index is out of range")
+                .charge()
+        }
+    }
+
+    pub fn find<T>(
+        &self,
+        pos: Ix2,
+        direction: Direction,
+        container_fn: impl Fn(&Container) -> bool,
+        particle_fn: impl Fn(&Particle) -> bool,
+    ) -> Option<Component> {
+        let mut previous = pos;
+        while let Some(pos) = self.move_direction(direction, previous) {
+            match self.top_container(&Component::Particle(OrdIx2::from(pos))) {
+                Some(c) => {
+                    if container_fn(c) {
+                        return Some(Component::Container(c.contents().clone()));
+                    }
+                }
+                None => {
+                    if particle_fn(self.particles().get(pos).expect("Index is out of range")) {
+                        return Some(Component::Particle(OrdIx2::from(pos)));
+                    }
+                }
+            };
+
+            previous = pos
+        }
+
+        None
+    }
+
+    pub fn find_value<T>(
+        &self,
+        pos: Ix2,
+        direction: Direction,
+        container_fn: impl Fn(&Container) -> Option<T>,
+        particle_fn: impl Fn(&Particle) -> Option<T>,
+    ) -> Option<(Component, T)> {
+        let mut previous = pos;
+        while let Some(pos) = self.move_direction(direction, previous) {
+            let result = match self.top_container(&Component::Particle(OrdIx2::from(pos))) {
+                Some(c) => container_fn(c).map(|v| (Component::Container(c.contents().clone()), v)),
+                None => particle_fn(self.particles().get(pos).expect("Index is out of range"))
+                    .map(|v| (Component::Particle(OrdIx2::from(pos)), v)),
+            };
+
+            if result.is_some() {
+                return result;
+            }
+
+            previous = pos
+        }
+
+        None
+    }
+
+    pub fn find_charge_single(&self, pos: Ix2, direction: Direction) -> i32 {
+        let mut previous = pos;
+        while let Some(pos) = self.move_direction(direction, previous) {
+            let charge = self.charge(pos);
+            if charge != 0 {
+                return charge;
+            }
+            previous = pos
+        }
+
+        0
+    }
+
+    pub fn find_charge_many(&self, contents: &Contents, direction: Direction) -> i32 {
+        let mut visited = SortedSet::new();
+        let mut total_charge = 0;
+
+        for pos in contents_positions(contents).iter() {
+            if let Some((component, charge)) = self.find_value(
+                Ix2::from(**pos),
+                direction,
+                |c| {
+                    let charge = c.charge();
+                    if charge != 0 {
+                        return Some(charge);
+                    }
+                    None
+                },
+                |p| {
+                    let charge = p.charge();
+                    if charge != 0 {
+                        return Some(charge);
+                    }
+                    None
+                },
+            ) {
+                if let (_, None) = visited.push(component) {
+                    total_charge += charge;
+                };
+                break;
+            };
+        }
+
+        total_charge
     }
 
     pub fn left(&self, pos: Ix2) -> Option<Ix2> {
